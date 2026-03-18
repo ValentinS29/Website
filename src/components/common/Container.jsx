@@ -1,3 +1,10 @@
+import { useCart } from "../context/CartContext";
+
+const Test = () => {
+  const { cart } = useCart();
+  console.log(cart);
+};
+
 function Container({ as: Component = "div", className = "", children }) {
   return (
     <Component

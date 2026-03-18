@@ -27,7 +27,8 @@ const normalizePrice = (price) => {
 };
 
 const toMoney = (value) =>
-  Math.round((value + Number.EPSILON) * CURRENCY_PRECISION) / CURRENCY_PRECISION;
+  Math.round((value + Number.EPSILON) * CURRENCY_PRECISION) /
+  CURRENCY_PRECISION;
 
 const clonePlainObject = (value) => {
   if (value === null || value === undefined) {
@@ -93,7 +94,12 @@ const matchesTargetItem = (item, productId, customizations) => {
   return item.lineItemKey === createLineItemKey(productId, customizations);
 };
 
-export const addToCart = (cartItems, product, quantity = 1, customizations = {}) => {
+export const addToCart = (
+  cartItems,
+  product,
+  quantity = 1,
+  customizations = {},
+) => {
   assertCart(cartItems);
 
   const unitPrice = validateProduct(product);
@@ -106,7 +112,9 @@ export const addToCart = (cartItems, product, quantity = 1, customizations = {})
   const safeCustomizations = clonePlainObject(customizations);
   const lineItemKey = createLineItemKey(product.id, safeCustomizations);
 
-  const existingIndex = cartItems.findIndex((item) => item.lineItemKey === lineItemKey);
+  const existingIndex = cartItems.findIndex(
+    (item) => item.lineItemKey === lineItemKey,
+  );
 
   if (existingIndex === -1) {
     const newItem = {
@@ -148,7 +156,12 @@ export const removeFromCart = (cartItems, productId, customizations) => {
   );
 };
 
-export const updateQuantity = (cartItems, productId, quantity, customizations) => {
+export const updateQuantity = (
+  cartItems,
+  productId,
+  quantity,
+  customizations,
+) => {
   assertCart(cartItems);
 
   if (!productId) {
@@ -180,7 +193,11 @@ export const getTotal = (cartItems) => {
     const unitPrice = Number(item.price);
     const quantity = Number(item.quantity);
 
-    if (!Number.isFinite(unitPrice) || !Number.isFinite(quantity) || quantity <= 0) {
+    if (
+      !Number.isFinite(unitPrice) ||
+      !Number.isFinite(quantity) ||
+      quantity <= 0
+    ) {
       return sum;
     }
 
