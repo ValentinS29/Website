@@ -1,5 +1,8 @@
 const CURRENCY_PRECISION = 100;
 
+const isPlainObject = (value) =>
+  Object.prototype.toString.call(value) === "[object Object]";
+
 const assertCart = (cartItems) => {
   if (!Array.isArray(cartItems)) {
     throw new TypeError("cartItems must be an array");
@@ -30,16 +33,16 @@ const toMoney = (value) =>
   Math.round((value + Number.EPSILON) * CURRENCY_PRECISION) /
   CURRENCY_PRECISION;
 
-const clonePlainObject = (value) => {
-  if (value === null || value === undefined) {
+const cloneCustomizationData = (customizationData) => {
+  if (customizationData === null || customizationData === undefined) {
     return {};
   }
 
-  if (typeof value !== "object" || Array.isArray(value)) {
-    throw new TypeError("customizations must be a plain object");
+  if (!isPlainObject(customizationData)) {
+    throw new TypeError("customizationData must be a plain object");
   }
 
-  return JSON.parse(JSON.stringify(value));
+  return JSON.parse(JSON.stringify(customizationData));
 };
 
 const sortObjectKeys = (value) => {
@@ -59,8 +62,8 @@ const sortObjectKeys = (value) => {
   return value;
 };
 
-const createLineItemKey = (productId, customizations = {}) =>
-  productId + "::" + JSON.stringify(sortObjectKeys(customizations));
+export const createCartItemId = (productId, customizationData = {}) =>
+  productId + "::" + JSON.stringify(sortObjectKeys(customizationData));
 
 const validateProduct = (product) => {
   if (!product || typeof product !== "object") {
@@ -75,58 +78,40 @@ const validateProduct = (product) => {
     throw new TypeError("product.name is required");
   }
 
-  if (!product.imageUrl || typeof product.imageUrl !== "string") {
-    throw new TypeError("product.imageUrl is required");
+  if (!product.image || typeof product.image !== "string") {
+    throw new TypeError("product.image is required");
   }
 
-  return normalizePrice(product.price);
+  return {
+    id: product.id,
+    name: product.name,
+    price: normalizePrice(product.price),
+    category: product.category ?? "",
+    material: product.material ?? "",
+    image: product.image,
+  };
 };
 
-const matchesTargetItem = (item, productId, customizations) => {
-  if (item.productId !== productId) {
-    return false;
-  }
-
-  if (customizations === undefined) {
-    return true;
-  }
-
-  return item.lineItemKey === createLineItemKey(productId, customizations);
-};
-
-export const addToCart = (
-  cartItems,
-  product,
-  quantity = 1,
-  customizations = {},
-) => {
+export const addToCart = (cartItems, product, customizationData = {}) => {
   assertCart(cartItems);
 
-  const unitPrice = validateProduct(product);
-  const normalizedQuantity = normalizeQuantity(quantity);
+  const safeProduct = validateProduct(product);
+  const safeCustomizationData = cloneCustomizationData(customizationData);
+  const cartItemId = createCartItemId(safeProduct.id, safeCustomizationData);
 
-  if (normalizedQuantity <= 0) {
-    return [...cartItems];
-  }
-
-  const safeCustomizations = clonePlainObject(customizations);
-  const lineItemKey = createLineItemKey(product.id, safeCustomizations);
-
-  const existingIndex = cartItems.findIndex(
-    (item) => item.lineItemKey === lineItemKey,
-  );
+  const existingIndex = cartItems.findIndex((item) => item.id === cartItemId);
 
   if (existingIndex === -1) {
     const newItem = {
-      lineItemKey,
-      productId: product.id,
-      name: product.name,
-      category: product.category,
-      material: product.material,
-      imageUrl: product.imageUrl,
-      price: unitPrice,
-      quantity: normalizedQuantity,
-      customizations: safeCustomizations,
+      id: cartItemId,
+      productId: safeProduct.id,
+      name: safeProduct.name,
+      category: safeProduct.category,
+      material: safeProduct.material,
+      image: safeProduct.image,
+      price: safeProduct.price,
+      quantity: 1,
+      customizationData: safeCustomizationData,
     };
 
     return [...cartItems, newItem];
@@ -139,43 +124,36 @@ export const addToCart = (
 
     return {
       ...item,
-      quantity: item.quantity + normalizedQuantity,
+      quantity: item.quantity + 1,
     };
   });
 };
 
-export const removeFromCart = (cartItems, productId, customizations) => {
+export const removeFromCart = (cartItems, id) => {
   assertCart(cartItems);
 
-  if (!productId) {
+  if (!id) {
     return [...cartItems];
   }
 
-  return cartItems.filter(
-    (item) => !matchesTargetItem(item, productId, customizations),
-  );
+  return cartItems.filter((item) => item.id !== id);
 };
 
-export const updateQuantity = (
-  cartItems,
-  productId,
-  quantity,
-  customizations,
-) => {
+export const updateQuantity = (cartItems, id, quantity) => {
   assertCart(cartItems);
 
-  if (!productId) {
+  if (!id) {
     return [...cartItems];
   }
 
   const normalizedQuantity = normalizeQuantity(quantity);
 
   if (normalizedQuantity <= 0) {
-    return removeFromCart(cartItems, productId, customizations);
+    return removeFromCart(cartItems, id);
   }
 
   return cartItems.map((item) => {
-    if (!matchesTargetItem(item, productId, customizations)) {
+    if (item.id !== id) {
       return item;
     }
 
