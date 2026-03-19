@@ -4,11 +4,27 @@ import { useCart } from "../context/CartContext";
 import { navLinks } from "../data/navigation";
 import Container from "./common/Container";
 
+const MOBILE_MENU_PATHS = [
+  "/",
+  "/shop",
+  "/custom-order",
+  "/b2b",
+  "/contact",
+  "/cart",
+];
+
 const linkClassName = ({ isActive }) =>
   `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
     isActive
       ? "bg-brand-50 text-brand-700"
       : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+  }`;
+
+const mobileLinkClassName = ({ isActive }) =>
+  `block rounded-lg px-4 py-3 text-base font-medium transition-colors ${
+    isActive
+      ? "bg-brand-50 text-brand-700"
+      : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
   }`;
 
 function Navbar({ brandName = "CraftCommerce" }) {
@@ -18,6 +34,14 @@ function Navbar({ brandName = "CraftCommerce" }) {
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
     [cart],
+  );
+
+  const mobileLinks = useMemo(
+    () =>
+      MOBILE_MENU_PATHS.map((path) =>
+        navLinks.find((link) => link.to === path),
+      ).filter(Boolean),
+    [],
   );
 
   return (
@@ -77,13 +101,16 @@ function Navbar({ brandName = "CraftCommerce" }) {
       {isMobileMenuOpen && (
         <div className="border-t border-slate-200 bg-white md:hidden">
           <Container>
-            <nav className="grid py-3" aria-label="Mobile navigation">
-              {navLinks.map((link) => (
+            <nav
+              className="flex flex-col gap-2 py-4"
+              aria-label="Mobile navigation"
+            >
+              {mobileLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={linkClassName}
+                  className={mobileLinkClassName}
                 >
                   {link.label}
                   {link.to === "/cart" && cartCount > 0 && (
