@@ -138,7 +138,7 @@ function ProductPage() {
         </div>
 
         <div className="space-y-6">
-          <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-center gap-2">
               <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700">
                 {formatCategoryLabel(product.category)}
@@ -150,12 +150,20 @@ function ProductPage() {
               )}
             </div>
 
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
               {product.name}
             </h1>
 
+            <p className="text-lg text-slate-700">
+              A unique personalized gift made just for you.
+            </p>
+
             <p className="text-3xl font-semibold text-brand-700">
               ${product.price.toFixed(2)}
+            </p>
+
+            <p className="text-sm font-medium text-slate-700">
+              Custom-made with high-quality materials.
             </p>
 
             <p className="max-w-prose text-base text-slate-600">
@@ -164,14 +172,13 @@ function ProductPage() {
           </section>
 
           {hasCustomizationOptions && (
-            <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <div className="space-y-1">
+            <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="space-y-2">
                 <h2 className="text-xl font-semibold text-slate-900">
-                  Customize Your Product
+                  Personalize your product
                 </h2>
-                <p className="text-sm text-slate-600">
-                  Add your details below. Preview updates instantly for text
-                  fields.
+                <p className="text-base text-slate-600">
+                  Make this item one of a kind by adding your custom details.
                 </p>
               </div>
 
@@ -202,6 +209,10 @@ function ProductPage() {
                           maxLength={option.maxLength ?? undefined}
                           className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base text-slate-900 outline-none ring-brand-500 transition focus:ring"
                         />
+
+                        <p className="text-xs font-medium text-slate-500">
+                          This text will be engraved.
+                        </p>
 
                         <div className="rounded-lg border border-dashed border-brand-300 bg-brand-50 p-3">
                           <p className="text-xs font-semibold uppercase tracking-wide text-brand-700">
@@ -240,24 +251,41 @@ function ProductPage() {
           )}
 
           {!hasCustomizationOptions && product.customizable && (
-            <section className="rounded-2xl border border-brand-200 bg-brand-50 p-4">
-              <h2 className="text-lg font-semibold text-slate-900">
-                Customization Available
+            <section className="space-y-2 rounded-2xl border border-brand-200 bg-brand-50 p-4">
+              <h2 className="text-xl font-semibold text-slate-900">
+                Personalize your product
               </h2>
-              <p className="mt-1 text-sm text-slate-700">
+              <p className="text-sm font-medium text-slate-600">
+                This text will be engraved.
+              </p>
+              <p className="text-sm text-slate-700">
                 This product supports custom requests. Contact us for details.
               </p>
             </section>
           )}
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <button
               type="button"
               onClick={handleAddToCart}
-              className="inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-brand-700/30 transition duration-200 hover:scale-[1.01] hover:bg-brand-600 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-6 py-4 text-xl font-bold text-white shadow-lg shadow-brand-700/30 transition duration-200 hover:scale-[1.01] hover:bg-brand-600 active:scale-[0.99] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-700 focus-visible:ring-offset-2"
             >
               Add to Cart
             </button>
+
+            <p className="text-sm font-medium text-slate-600">
+              Made to order - crafted after purchase.
+            </p>
+
+            <div className="space-y-2 rounded-xl bg-slate-50 p-4">
+              <p className="text-sm font-medium text-slate-700">✔ Made by us</p>
+              <p className="text-sm font-medium text-slate-700">
+                ✔ Custom engraving available
+              </p>
+              <p className="text-sm font-medium text-slate-700">
+                ✔ Fast production
+              </p>
+            </div>
 
             <Link
               to="/cart"
@@ -265,18 +293,6 @@ function ProductPage() {
             >
               View Cart
             </Link>
-
-            <div className="mt-4 grid gap-3 rounded-xl bg-slate-50 p-4 sm:grid-cols-3">
-              <p className="text-sm font-medium text-slate-700">
-                🛠️ Made by us
-              </p>
-              <p className="text-sm font-medium text-slate-700">
-                🌳 High-quality materials
-              </p>
-              <p className="text-sm font-medium text-slate-700">
-                ⚡ Fast production
-              </p>
-            </div>
           </section>
         </div>
       </section>

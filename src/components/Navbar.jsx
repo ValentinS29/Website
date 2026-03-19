@@ -15,10 +15,10 @@ const linkIndicatorClassName = ({ isActive }) =>
   }`;
 
 const mobileLinkClassName = ({ isActive }) =>
-  `block rounded-lg px-6 py-4 text-base font-medium transition-colors ${
+  `block rounded-lg px-6 py-4 text-base font-medium transition-all duration-200 ${
     isActive
       ? "bg-brand-50 text-brand-700"
-      : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+      : "text-slate-700 hover:translate-x-1 hover:bg-slate-100 hover:text-slate-900"
   }`;
 
 function Navbar({ brandName = "CraftCommerce" }) {
@@ -86,7 +86,7 @@ function Navbar({ brandName = "CraftCommerce" }) {
           aria-controls="mobile-navigation"
           aria-expanded={isMobileMenuOpen}
           onClick={() => setIsMobileMenuOpen((current) => !current)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition-colors duration-300 hover:bg-slate-100 md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-100 md:hidden"
         >
           <span className="sr-only">Open navigation menu</span>
           <svg
@@ -96,7 +96,9 @@ function Navbar({ brandName = "CraftCommerce" }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="h-5 w-5"
+            className={`h-5 w-5 transition-transform duration-300 ${
+              isMobileMenuOpen ? "rotate-90" : "rotate-0"
+            }`}
             aria-hidden="true"
           >
             {isMobileMenuOpen ? (
@@ -109,7 +111,7 @@ function Navbar({ brandName = "CraftCommerce" }) {
       </Container>
 
       <div
-        className={`fixed inset-0 z-40 bg-slate-900/40 transition-all duration-300 md:hidden ${
+        className={`fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-[1px] transition-all duration-300 md:hidden ${
           isMobileMenuOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -120,10 +122,10 @@ function Navbar({ brandName = "CraftCommerce" }) {
         <Container className="pt-20">
           <div
             id="mobile-navigation"
-            className={`rounded-xl border border-slate-200 bg-white shadow-lg transition-all duration-300 ${
+            className={`origin-top rounded-xl border border-slate-200 bg-white shadow-lg transition-all duration-300 ${
               isMobileMenuOpen
-                ? "translate-y-0 opacity-100"
-                : "-translate-y-3 opacity-0"
+                ? "translate-y-0 scale-100 opacity-100"
+                : "-translate-y-3 scale-95 opacity-0"
             }`}
             onClick={(event) => event.stopPropagation()}
           >

@@ -11,5 +11,17 @@ body {
 }
 
 a {
-  @apply text-inherit no-underline;
+  @apply text-inherit no-underline transition-colors duration-200;
+}
+
+button {
+  @apply transition-all duration-200;
+}
+
+button:enabled:hover {
+  @apply -translate-y-0.5;
+}
+
+button:enabled:active {
+  @apply translate-y-0 scale-[0.99];
 }
