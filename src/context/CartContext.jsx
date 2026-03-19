@@ -48,7 +48,9 @@ export const CartProvider = ({ children }) => {
   }, [cart]);
 
   const addToCart = useCallback((product, customizationData = {}) => {
-    setCart((currentCart) => addCartItem(currentCart, product, customizationData));
+    setCart((currentCart) =>
+      addCartItem(currentCart, product, customizationData),
+    );
   }, []);
 
   const removeFromCart = useCallback((id) => {
@@ -89,3 +91,12 @@ export const useCart = () => {
 
   return context;
 };
+
+// const [cart, setCart] = useState(() => {
+//   const saved = localStorage.getItem("cart");
+//   return saved ? JSON.parse(saved) : [];
+// });
+
+// useEffect(() => {
+//   localStorage.setItem("cart", JSON.stringify(cart));
+// }, [cart]);

@@ -87,7 +87,9 @@ function Product() {
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               {product.category}
             </p>
-            <h1 className="text-3xl font-bold text-slate-900">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-slate-900">
+              {product.name}
+            </h1>
             <p className="text-slate-600">{product.material}</p>
             <p className="text-2xl font-bold text-slate-900">
               ${product.price.toFixed(2)}
@@ -96,7 +98,9 @@ function Product() {
 
           {product.customizable && product.options.length > 0 && (
             <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-4">
-              <h2 className="text-lg font-semibold text-slate-900">Customize</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Customize
+              </h2>
 
               {product.options.map((option) => (
                 <label key={option.key} className="block space-y-2">

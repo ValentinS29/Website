@@ -14,7 +14,8 @@ const getCustomizationEntries = (customizationData) =>
   );
 
 function Cart() {
-  const { cart, removeFromCart, updateQuantity, clearCart, getTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, clearCart, getTotal } =
+    useCart();
   const total = getTotal();
 
   if (cart.length === 0) {
@@ -47,7 +48,9 @@ function Cart() {
 
       <div className="space-y-4">
         {cart.map((item) => {
-          const customizations = getCustomizationEntries(item.customizationData);
+          const customizations = getCustomizationEntries(
+            item.customizationData,
+          );
 
           return (
             <article
@@ -91,7 +94,9 @@ function Cart() {
                   type="number"
                   min="1"
                   value={item.quantity}
-                  onChange={(event) => updateQuantity(item.id, event.target.value)}
+                  onChange={(event) =>
+                    updateQuantity(item.id, event.target.value)
+                  }
                   className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-sm text-slate-900 outline-none ring-brand-500 transition focus:ring md:ml-auto"
                 />
 
@@ -113,7 +118,9 @@ function Cart() {
       </div>
 
       <div className="flex flex-col items-start justify-between gap-4 rounded-xl border border-slate-200 bg-white p-4 md:flex-row md:items-center">
-        <p className="text-xl font-bold text-slate-900">Total: ${total.toFixed(2)}</p>
+        <p className="text-xl font-bold text-slate-900">
+          Total: ${total.toFixed(2)}
+        </p>
 
         <div className="flex items-center gap-3">
           <Link
