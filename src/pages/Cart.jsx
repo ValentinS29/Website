@@ -13,10 +13,13 @@ const getCustomizationEntries = (customizationData) =>
     ([, value]) => value !== "" && value !== null && value !== undefined,
   );
 
+const formatMoney = (value) => `$${Number(value).toFixed(2)}`;
+
 function Cart() {
   const { cart, removeFromCart, updateQuantity, clearCart, getTotal } =
     useCart();
-  const total = getTotal();
+  const subtotal = getTotal();
+  const total = subtotal;
 
   if (cart.length === 0) {
     return (
@@ -35,9 +38,15 @@ function Cart() {
 
   return (
     <Container className="py-12">
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-3xl font-bold text-slate-900">Your Cart</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">Your Cart</h1>
+            <p className="mt-1 text-sm text-slate-600">
+              Review your items and finalize your order.
+            </p>
+          </div>
+
           <button
             type="button"
             onClick={clearCart}
@@ -47,7 +56,7 @@ function Cart() {
           </button>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[1fr_340px] lg:items-start">
           <section className="space-y-6">
             {cart.map((item) => {
               const customizations = getCustomizationEntries(
@@ -68,17 +77,27 @@ function Cart() {
                       />
                     </Link>
 
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <Link
-                          to={`/product/${item.productId}`}
-                          className="text-lg font-semibold text-slate-900"
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <Link
+                            to={`/product/${item.productId}`}
+                            className="text-lg font-semibold text-slate-900"
+                          >
+                            {item.name}
+                          </Link>
+                          <p className="text-sm text-slate-600">
+                            {item.material}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => removeFromCart(item.id)}
+                          className="inline-flex items-center rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-red-600 transition hover:bg-red-50"
                         >
-                          {item.name}
-                        </Link>
-                        <p className="text-sm text-slate-600">
-                          {item.material}
-                        </p>
+                          Remove
+                        </button>
                       </div>
 
                       <div className="rounded-lg bg-slate-50 p-3">
@@ -101,41 +120,57 @@ function Cart() {
                         )}
                       </div>
 
-                      <div className="grid gap-3 sm:grid-cols-[auto_1fr_auto] sm:items-end">
-                        <label className="block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                          Quantity
-                          <input
-                            type="number"
-                            min="1"
-                            value={item.quantity}
-                            onChange={(event) =>
-                              updateQuantity(item.id, event.target.value)
-                            }
-                            className="mt-1 block w-24 rounded-lg border border-slate-300 px-2 py-1.5 text-sm text-slate-900 outline-none ring-brand-500 transition focus:ring"
-                          />
-                        </label>
+                      <div className="grid gap-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Quantity
+                          </p>
+                          <div className="mt-2 inline-flex items-center rounded-lg border border-slate-300 bg-white">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(
+                                  item.id,
+                                  Math.max(1, item.quantity - 1),
+                                )
+                              }
+                              disabled={item.quantity <= 1}
+                              className="h-10 w-10 rounded-l-lg text-lg font-semibold text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                              aria-label={`Decrease quantity of ${item.name}`}
+                            >
+                              -
+                            </button>
+
+                            <span className="inline-flex h-10 min-w-10 items-center justify-center border-x border-slate-300 px-3 text-sm font-semibold text-slate-900">
+                              {item.quantity}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
+                              className="h-10 w-10 rounded-r-lg text-lg font-semibold text-slate-700 transition hover:bg-slate-100"
+                              aria-label={`Increase quantity of ${item.name}`}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
 
                         <p className="text-sm text-slate-600">
-                          ${item.price.toFixed(2)} each
+                          {formatMoney(item.price)} per item
                         </p>
 
                         <div className="sm:text-right">
                           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                            Price
+                            Item Total
                           </p>
-                          <p className="text-lg font-bold text-slate-900">
-                            ${(item.price * item.quantity).toFixed(2)}
+                          <p className="text-xl font-bold text-slate-900">
+                            {formatMoney(item.price * item.quantity)}
                           </p>
                         </div>
                       </div>
-
-                      <button
-                        type="button"
-                        onClick={() => removeFromCart(item.id)}
-                        className="inline-flex w-fit text-sm font-semibold text-red-600 transition hover:text-red-700"
-                      >
-                        Remove
-                      </button>
                     </div>
                   </div>
                 </article>
@@ -143,26 +178,39 @@ function Cart() {
             })}
           </section>
 
-          <aside className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <aside className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm lg:sticky lg:top-24">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
               Order Summary
             </p>
 
-            <div className="mt-4 space-y-2 border-y border-slate-200 py-4">
-              <p className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-                TOTAL
-              </p>
-              <p className="text-3xl font-bold text-slate-900">
-                ${total.toFixed(2)}
+            <div className="mt-4 space-y-3 rounded-lg bg-slate-50 p-4">
+              <div className="flex items-center justify-between text-sm text-slate-700">
+                <span>Subtotal</span>
+                <span className="font-semibold text-slate-900">
+                  {formatMoney(subtotal)}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                <span className="text-base font-bold text-slate-900">
+                  Total
+                </span>
+                <span className="text-2xl font-bold text-slate-900">
+                  {formatMoney(total)}
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-500">
+                Taxes and shipping are calculated at checkout.
               </p>
             </div>
 
-            <button
-              type="button"
-              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-brand-700/25 transition hover:bg-brand-600"
+            <Link
+              to="/checkout"
+              className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-brand-700 px-5 py-4 text-base font-bold text-white shadow-lg shadow-brand-700/30 transition duration-200 hover:scale-[1.01] hover:bg-brand-600 active:scale-[0.99]"
             >
               Checkout
-            </button>
+            </Link>
 
             <Link
               to="/shop"
